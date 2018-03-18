@@ -18,12 +18,8 @@ var spotifyClient = new Spotify ({
     secret: keys.secret
 });
 
-
-
-
-
+//******Code to intake inputs after node liri.js
 var fs = require('fs');
-
 
 var nodeArgv = process.argv;
 var command = process.argv[2];
@@ -39,6 +35,7 @@ for (var i=3; i<nodeArgv.length; i++){
 }
 
 
+//**Switch commands to grab user inputs.
 switch(command){
     case "my-tweets":
         tweets();
@@ -61,7 +58,7 @@ switch(command){
         break;
 
     case "do-what-it-says":
-        doThing();
+        runSays(x);
         break;
 
     default:
@@ -69,6 +66,7 @@ switch(command){
         break;
 }
 
+//Shows my tweets
 function tweets(){
     var screenName = {screen_name: 'JackMcCoy85'};
     client.get('statuses/user_timeline', screenName, function(error, tweets, response){
@@ -83,8 +81,9 @@ function tweets(){
     });
 }
 
-function getSong() {
-    spotifyClient.search({ type: 'track', query: 'As Loke Falls' }, function(err, data) {
+//Searches Spotify API for a song entered on console.
+function getSong(x) {
+    spotifyClient.search({ type: 'track', query: x }, function(err, data) {
         if (err) {
             return console.log('Error occurred: ' + err);
         } else {
@@ -99,8 +98,10 @@ function getSong() {
 
 }
 
-function grabMovie() {
-    request("http://www.omdbapi.com/?t=Mr.+Nobody&y=&plot=short&apikey=trilogy" + "&plot=short&tomatoes=true", function(error, response, body) {
+//Searches OMDB Database for movie entered on console.
+function grabMovie(x) {
+    request("http://www.omdbapi.com/?t=" + x + "&y=&plot=short&apikey=trilogy&tomatoes=true&plot=short",
+        function(error, response, body) {
         // If the request is successful (i.e. if the response status code is 200)
         if (!error && response.statusCode === 200) {
             // Parse the body of the site and recover just the imdbRating
@@ -114,13 +115,18 @@ function grabMovie() {
             console.log("The movie's Plot is: " + JSON.parse(body).Plot);
             console.log("The movie contains the Actors: " + JSON.parse(body).Actors);
 
-
         }
     });
 
 }
 
-
+//Reads random.txt file and grabs text from first line. Could use loops if more than one entry.
+function runSays(){
+    fs.readFile('random.txt', "utf8", function(error, data){
+        var txt = data.split(',');
+        getSong(txt[1]);
+    });
+}
 
 
 
